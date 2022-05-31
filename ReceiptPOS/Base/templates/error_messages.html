@@ -1,0 +1,8 @@
+
+{% if messagess %}
+  {% for message in messages %}
+    <div class="alert alert-danger alert-dismissible fade show text-center" id="danger-alert" role="alert">
+       {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+
+<div class="row">
+
+  <div class="col-3 col-sm-3 col-xm-12"></div>
+
+  <div class="col-6 col-sm-6 col-xm-12">
+    <p class="text-center">Update profile</p>
+
+    <form class="form-control" method="POST" action="." enctype="multipart/form-data">
+
+      {% include "success_messages.html" %}
+
+      {% csrf_token %}
+      {% for field in form %}
+
+      <div class="mb-3">
+        {{ field }}
+      </div>
+
+      {% endfor %}
+
+      <div class="row">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start col-6">
+          <button class="btn btn-outline-secondary" type="submit" name="button">Save</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="col-3 col-sm-3 col-xm-12"></div>
+
+</div>
+
+{% endblock %}

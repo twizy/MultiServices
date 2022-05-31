@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+
+  <div class="col-3 col-sm-3 col-xm-12"></div>
+
+  <div class="col-6 col-sm-6 col-xm-12">
+    <p class="text-center">Sign in now</p>
+
+    <form class="form-control" method="POST" action="{% url 'login' %}">
+
+      {% include "error_messages.html" %}
+
+      {% csrf_token %}
+      {% for field in form %}
+
+      <div class="mb-3">
+        {{ field }}
+      </div>
+
+      {% endfor %}
+
+	    <p>Forgotten password ? <a href="{% url 'changePassword' %}">Reset</a></p>
+
+      <div class="row">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start col-6">
+          <button class="btn btn-outline-secondary" type="submit" name="button">Sign in</button>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end col-6">
+          <a class="btn btn-outline-primary" href="{% url 'register' %}">
+            Sign up
+          </a>
+        </div>
+      </div>
+
+
+
+    </form>
+
+  </div>
+
+  <div class="col-3 col-sm-3 col-xm-12"></div>
+
+</div>
+
+{% endblock %}

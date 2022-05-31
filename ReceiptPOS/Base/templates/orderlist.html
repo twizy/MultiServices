@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+
+<div class="row">
+
+  <div class="col-1 col-sm-1 col-xm-12"></div>
+
+  <div class="col-10 col-sm-10 col-xm-12">
+
+	<form method="POST" action=".">
+		{% csrf_token %}
+		<table class="table">
+		  <thead>
+		    <tr>
+			    <th scope="col">#</th>
+			    <th scope="col">No Ref</th>
+			    <th scope="col">Produit</th>
+			    <th scope="col">#</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+
+		  {% for item in myOrder %}
+
+		    <tr>
+			    <td>{{ forloop.counter }}</td>
+			    <td>{{ item.no }}</td>
+			    <td>{{ item.name }}</td>
+			    <td><a class="btn btn-outline-secondary" href="{% url 'orderDetail' item.id item.name.id %}">Voir</a></td>
+		    </tr>
+
+		  {% endfor %}
+
+		  </tbody>
+		</table>
+	</form>
+
+  </div>
+
+  <div class="col-1 col-sm-1 col-xm-12"></div>
+
+</div>
+
+{% endblock %}
+
+
