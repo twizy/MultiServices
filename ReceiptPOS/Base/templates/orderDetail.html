@@ -14,6 +14,32 @@
 </head>
 <body>
 
+<div class="row">
+	<div class="col-1 col-sm-1 col-xm-12"></div>
+	<div class="col-5 col-sm-5 col-xm-12">
+		<img src="/media/photo/90.jpg" class="imgcente" alt="Logo"><br>
+		<p>A. Identification du vendeur<br>
+		NIF: XXXXXXXXX<br>
+		R.C: XXXXXXXXX<br>
+		B.P: XXXX<br>
+		AV de la revolution: XXXXXXXXXXXXXXXXXXXX<br>
+		Assujetti a la TVA: XXX<br>
+		doit pour ce qui suit: XXXXXXXXX<br></p>
+	</div>
+
+	<div class="col-5 col-sm-5 col-xm-12">
+		<br><br>
+		Centre fiscale:<br>
+		Secteur d'activite:<br>
+		Forme juridique:<br><br>
+		<p>B. Client<br>
+		Nom et prenom ou raison sociale: {{clien.client}}<br>
+		NIF: {{clien.nif}}<br>
+		Resident a: {{clien.residence}}<br>
+		Assujetti a la TVA:<br></p>
+	</div>
+	<div class="col-1 col-sm-1 col-xm-12"></div>
+</div>
 
 
 <div class="row">
@@ -21,14 +47,10 @@
   <div class="col-1 col-sm-1 col-xm-12"></div>
 
   <div id="ticket" class="col-10 col-sm-10 col-xm-12">
-
-	  <img src="/media/photo/90.jpg" class="imgcenter" alt="Logo">
-	  <p class="text-center">Nom d'entreprise</p>
-
+		<p class="text-center">FACTURE NO: {{ detOrder.no }}</p>
 	  <table class="table">
 	  <thead>
 	    <tr>
-		    <th scope="col">No</th>
 		    <th scope="col">Description</th>
 		    <th scope="col">Qté*</th>
 		    <th scope="col">PU*</th>
@@ -38,22 +60,27 @@
 	  </thead>
 	  <tbody>
 
-	  {% for item in loo %}
+	  {% for item, tot_tva in mylist %}
 
 	    <tr>
-	      <td>{{ loop.counter }}</td>
 	      <td>{{ item.name }}</td>
 		    <td>{{ item.quantity }}</td>
 		    <td>{{ item.name.price }}</td>
 		    <td>{{ item.name.price|mul:item.quantity }}</td>
-		    <td>{{ item.name.price|mul:18|div:100|addition:item.name.price|mul:item.quantity }}</td>
+		    <td> {{ tot_tva|floatformat:2 }}</td>
 	    </tr>
 
 	  {% endfor %}
 
 	  </tbody>
 	  </table>
->
+
+	  <p>
+		  TVA: {{ each_tva|floatformat:2 }} FBU <br>
+		  Prix total hors TVA: {{ each_price|floatformat:2 }} FBU <br>
+		  Prix total avec TVA: {{ each_full|floatformat:2 }} FBU <br>
+	  </p>
+
 	  <button id="btnPrint" class="hidden-print">Imprimer</button>
 
   </div>
@@ -61,8 +88,6 @@
   <div class="col-1 col-sm-1 col-xm-12"></div>
 
 </div>
-
-
 
 	<footer class="container text-center">
 	  <p class="centered">Merci pour votre achat !!!

@@ -14,7 +14,7 @@ from django.core.files import File
 from django.contrib.auth.forms import PasswordChangeForm
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db.models import Count
-
+from django.db.models import Sum
 # Create your views here.
 
 
@@ -65,7 +65,7 @@ def registration(request):
                     login(request, user)
                     return redirect(index)
     form = RegistrationForm()
-    return render(request, 'registration.html', locals())
+    return render(request, 'register.html', locals())
 
 
 @login_required
@@ -119,24 +119,22 @@ def productList(request):
     neworder = order + 1
     getDataList = Products.objects.all()
     i = request.POST.getlist('checks[]')    #We check selected checkbox
-    ii = request.POST.getlist('checks1[]')  #We look for quantity
+    ii = request.POST.getlist('checks1[]') #We look for quantity
+    i_len = str(len(i))
+    ii_empty_strings = list(filter(None, ii))
+    ii_len = str(len(ii_empty_strings))
     form = OrderForm(request.POST)
+
     if form.is_valid():
-        for x in i:
-            for xx in ii:
-                if not xx == "":
-                    pro = Products.objects.get(id=x)
-                    u = request.user
-                    cl = form.cleaned_data['client']
-                    # if xx > pro.quantity:
-                    #     print("Quantity is big !")
-                    # else:
+        for pro_checked, qua_checked in zip(i, ii_empty_strings):
+            if i_len == ii_len:
+                pro = Products.objects.get(id=pro_checked)
+                u = request.user
+                cl = form.cleaned_data['client']
+                OrdersNo(user=u, client=cl, name=pro, no=neworder, quantity=qua_checked, price=pro.price).save()
 
-                    print(u, cl, pro, neworder, xx)
-                    # OrdersNo(user=u, client=cl, name=pro, no=neworder, quantity=xx).save()
-                    # messages.success(request, "Enregistré avec succès !")
         messages.success(request, "Enregistré avec succès !")
-
+    form = OrderForm()
     return render(request, "productlist.html", locals())
 
 
@@ -152,9 +150,37 @@ def orderDetail(request, id, idd):
     header_title = "Factures"
     detOrder = get_object_or_404(OrdersNo, id=id)
     productData = get_object_or_404(Products, id=idd)
-    pr = productData.price
+    clien = get_object_or_404(ClientProfile, id=detOrder.client.id)
 
     loo = OrdersNo.objects.filter(no=detOrder.no)
+    # looi = OrdersNo.objects.filter(no=detOrder.no).aggregate(Sum('quantity'))
+    # qu = looi['quantity__sum']
+    quantity_list = []
+    price_list = []
+    total_price_list = []
+    tva_price_list = []
+    total_price_tva_list = []
+    each_full = 0.0
+    each_price = 0.0
+    each_tva = 0.0
+    for x in loo:
+        quantity_list.append(x.quantity)
+        price_list.append(x.name.price)
+        pv_total = float(x.name.price) * float(x.quantity)  # Total price without TVA for each
+        tva = pv_total * 18.0 / 100  # TVA for each
+        tottva = tva + pv_total  # Total price with TVA for each
+        total_price_list.append(pv_total)
+        tva_price_list.append(tva)
+        total_price_tva_list.append(tottva)
+
+        each_tva = each_tva + tva
+        each_price = each_price + pv_total
+        each_full = each_full + tottva
+
+    mylist = zip(loo, total_price_tva_list)
+    context = {
+        'mylist': mylist,
+    }
 
     return render(request, "orderDetail.html", locals())
 
@@ -201,35 +227,6 @@ def changePassword(request):
     return render(request, 'change_password.html', {
         'form': form
     })
-
-
-@login_required
-def saleview(request):
-    usr = ClientProfile.objects.all()
-    header_title = "Liste des produits"
-    order = OrdersNo.objects.all().count()
-    neworder = order + 1
-    getDataList = Products.objects.all()
-    i = request.POST.getlist('checks[]')    #We check selected checkbox
-    ii = request.POST.getlist('checks1[]')  #We look for quantity
-    form = OrderForm(request.POST)
-    # if form.is_valid():
-    #     for x in i:
-    #         for xx in ii:
-    #             if not xx == "":
-    #                 pro = Products.objects.get(id=x)
-    #                 u = request.user
-    #                 cl = form.cleaned_data['client']
-                    # if xx > pro.quantity:
-                    #     print("Quantity is big !")
-                    # else:
-
-                    # print(u, cl, pro, neworder, xx)
-                    # OrdersNo(user=u, client=cl, name=pro, no=neworder, quantity=xx).save()
-                    # messages.success(request, "Enregistré avec succès !")
-        # messages.success(request, "Enregistré avec succès !")
-
-    return render(request, "sale.html", locals())
 
 
 # def check(a, p, p1):

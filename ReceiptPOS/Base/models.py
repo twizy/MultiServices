@@ -51,6 +51,7 @@ class OrdersNo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     no = models.CharField(null=True, blank=True, max_length=50)
     quantity = models.CharField(null=True, blank=True, max_length=50)
+    price = models.CharField(null=True, blank=True, max_length=50)
     client = models.ForeignKey(ClientProfile, verbose_name="Client name", on_delete=models.CASCADE)
     name = models.ForeignKey(Products, verbose_name="Product name", on_delete=models.CASCADE)
 
